@@ -70,7 +70,8 @@ trait FormTrait
         $loading[$parentFqcn] = true;
 
         try {
-            $filePath = $this->findClassFile($parentFqcn);
+            $reflector = new \ReflectionClass($parentFqcn);
+            $filePath = $reflector->getFileName();
 
             if (!$filePath || !file_exists($filePath)) {
                 unset($loading[$parentFqcn]);
@@ -110,18 +111,5 @@ trait FormTrait
         unset($loading[$parentFqcn]);
 
         return $interfaces;
-    }
-
-    private function findClassFile(string $fqcn): ?string
-    {
-        $autoloadFile = __DIR__.'/../../../../vendor/autoload.php';
-
-        if (!file_exists($autoloadFile)) {
-            return null;
-        }
-
-        $loader = require $autoloadFile;
-
-        return $loader->findFile($fqcn) ?: null;
     }
 }
